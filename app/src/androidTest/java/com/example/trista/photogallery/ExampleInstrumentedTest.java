@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -31,13 +32,19 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
+//
+//    @Rule
+//    public ActivityTestRule<MainActivity> mActivityRule =
+//            new ActivityTestRule<>(MainActivity.class);
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    public IntentsTestRule<MainActivity> intentsTestRule =
+            new IntentsTestRule<>(MainActivity.class);
+
 
     @Test
     public void testCamera() {
+        // Need to use original camera code where there's no saving of picture
         // Create a bitmap we can use for our simulated camera image
         Bitmap icon = BitmapFactory.decodeResource(
                 InstrumentationRegistry.getTargetContext().getResources(),
@@ -45,6 +52,7 @@ public class ExampleInstrumentedTest {
 
         // Build a result to return from the Camera app
         Intent resultData = new Intent();
+
         resultData.putExtra("data", icon);
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
 
