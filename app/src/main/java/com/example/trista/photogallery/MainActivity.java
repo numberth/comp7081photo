@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
+// original code
 //    static final int REQUEST_IMAGE_CAPTURE = 1;
 
 //    protected void dispatchTakePictureIntent(View view) {
