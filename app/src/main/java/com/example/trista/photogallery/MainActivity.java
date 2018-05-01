@@ -128,4 +128,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void openSearch(View view){
+        Intent openSearch = new Intent(this, Search.class);
+        startActivity(openSearch);
+    }
+
 }

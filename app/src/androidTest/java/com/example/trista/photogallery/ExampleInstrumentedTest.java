@@ -16,8 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -66,5 +68,16 @@ public class ExampleInstrumentedTest {
         // We can also validate that an intent resolving to the "camera" activity has been sent out by our app
         intended(toPackage("com.oneplus.camera"));
 
+    }
+
+    @Test
+    public void testSearch(){
+        onView(withId(R.id.search)).perform(click());
+        onView(withId(R.id.search_startdate)).perform(typeText("20180420"), closeSoftKeyboard());
+        onView(withId(R.id.search_enddate)).perform(typeText("20180430"), closeSoftKeyboard());
+        onView(withId(R.id.search_searchbtn)).perform(click());
+        for (int i = 0; i<= 5; i++){
+            onView(withId(R.id.clickRight)).perform(click());
+        }
     }
 }
