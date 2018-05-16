@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".myapplication.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +35,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".Search"></activity>
+        <activity android:name=".myapplication.Search" />
+        <activity android:name=".myapplication.Capture"></activity>
     </application>
 
 </manifest>

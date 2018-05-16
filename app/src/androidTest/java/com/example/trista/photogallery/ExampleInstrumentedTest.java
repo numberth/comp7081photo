@@ -1,30 +1,19 @@
 package com.example.trista.photogallery;
 
-import android.app.Activity;
-import android.app.Instrumentation;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.test.espresso.intent.Intents;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.example.trista.photogallery.myapplication.MainActivity;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static android.support.test.espresso.Espresso.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.intent.Intents.intending;
-import static org.junit.Assert.*;
 
 
 /**
@@ -34,49 +23,79 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
-//
-//    @Rule
-//    public ActivityTestRule<MainActivity> mActivityRule =
-//            new ActivityTestRule<>(MainActivity.class);
+    public int all, date, loc, cap, mix;
+
+    @Before
+    public void initVal(){
+        all = 3;
+        date = 3;
+        loc = 2;
+        cap = 1;
+        mix = 1;
+    }
 
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule =
             new IntentsTestRule<>(MainActivity.class);
 
-
     @Test
-    public void testCamera() {
-        // Need to use original camera code where there's no saving of picture
-        // Create a bitmap we can use for our simulated camera image
-        Bitmap icon = BitmapFactory.decodeResource(
-                InstrumentationRegistry.getTargetContext().getResources(),
-                R.mipmap.ic_launcher);
-
-        // Build a result to return from the Camera app
-        Intent resultData = new Intent();
-
-        resultData.putExtra("data", icon);
-        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
-
-        // Stub out the Camera. When an intent is sent to the Camera, this tells Espresso to respond
-        // with the ActivityResult we just created
-        intending(toPackage("com.oneplus.camera")).respondWith(result);
-
-        // Now that we have the stub in place, click on the button in our app that launches into the Camera
-        onView(withId(R.id.snap)).perform(click());
-
-        // We can also validate that an intent resolving to the "camera" activity has been sent out by our app
-        intended(toPackage("com.oneplus.camera"));
-
+    public void testSearchEmpty(){
+        onView(withId(R.id.search)).perform(click());
+        onView(withId(R.id.search_startdate)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_enddate)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_location)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_searchbtn)).perform(click());
+        for (int i = 0; i<= all; i++){
+            onView(withId(R.id.clickRight)).perform(click());
+        }
     }
 
     @Test
-    public void testSearch(){
+    public void testSearchLocation(){
         onView(withId(R.id.search)).perform(click());
-        onView(withId(R.id.search_startdate)).perform(typeText("20180420"), closeSoftKeyboard());
-        onView(withId(R.id.search_enddate)).perform(typeText("20180430"), closeSoftKeyboard());
+        onView(withId(R.id.search_startdate)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_enddate)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_location)).perform(typeText("bby"), closeSoftKeyboard());
         onView(withId(R.id.search_searchbtn)).perform(click());
-        for (int i = 0; i<= 5; i++){
+        for (int i = 0; i<= loc; i++){
+            onView(withId(R.id.clickRight)).perform(click());
+        }
+    }
+
+    @Test
+    public void testSearchDate(){
+        onView(withId(R.id.search)).perform(click());
+        onView(withId(R.id.search_startdate)).perform(typeText("20180501"), closeSoftKeyboard());
+        onView(withId(R.id.search_enddate)).perform(typeText("20180530"), closeSoftKeyboard());
+        onView(withId(R.id.search_location)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_searchbtn)).perform(click());
+        for (int i = 0; i<= date; i++){
+            onView(withId(R.id.clickRight)).perform(click());
+        }
+    }
+
+    @Test
+    public void testSearchCaption(){
+        onView(withId(R.id.search)).perform(click());
+        onView(withId(R.id.search_startdate)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_enddate)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_location)).perform(typeText(""), closeSoftKeyboard());
+        onView(withId(R.id.search_caption)).perform(typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.search_searchbtn)).perform(click());
+        for (int i = 0; i<= cap; i++){
+            onView(withId(R.id.clickRight)).perform(click());
+        }
+    }
+
+    @Test
+    public void testSearchAll(){
+        onView(withId(R.id.search)).perform(click());
+        onView(withId(R.id.search_startdate)).perform(typeText("20180501"), closeSoftKeyboard());
+        onView(withId(R.id.search_enddate)).perform(typeText("20180530"), closeSoftKeyboard());
+        onView(withId(R.id.search_location)).perform(typeText("bby"), closeSoftKeyboard());
+        onView(withId(R.id.search_caption)).perform(typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.search_searchbtn)).perform(click());
+        for (int i = 0; i<= mix; i++){
             onView(withId(R.id.clickRight)).perform(click());
         }
     }
