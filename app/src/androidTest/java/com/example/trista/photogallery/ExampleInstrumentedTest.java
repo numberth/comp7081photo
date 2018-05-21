@@ -2,6 +2,7 @@ package com.example.trista.photogallery;
 
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.example.trista.photogallery.myapplication.MainActivity;
 
@@ -98,5 +99,6 @@ public class ExampleInstrumentedTest {
         for (int i = 0; i<= mix; i++){
             onView(withId(R.id.clickRight)).perform(click());
         }
+        Log.d("Espresso test:", "TEST COMPLETE!");
     }
 }
