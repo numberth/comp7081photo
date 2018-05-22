@@ -99,6 +99,5 @@ public class ExampleInstrumentedTest {
         for (int i = 0; i<= mix; i++){
             onView(withId(R.id.clickRight)).perform(click());
         }
-        Log.d("Espresso test:", "TEST COMPLETE!");
     }
 }

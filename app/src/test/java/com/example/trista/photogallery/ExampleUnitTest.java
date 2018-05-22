@@ -1,5 +1,7 @@
 package com.example.trista.photogallery;
 
+import android.util.Log;
+
 import com.example.trista.photogallery.mydb.DataStoreImp;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,5 +65,6 @@ public class ExampleUnitTest {
         boolean nameChanged = ds.renameFile(old, renamed);
 
         assertTrue(nameChanged);
+        Log.i("Espresso test:", "TEST COMPLETE!");
     }
 }
