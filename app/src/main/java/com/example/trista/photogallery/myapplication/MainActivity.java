@@ -53,20 +53,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick( View v) {
-        switch (v.getId()) {
-            case R.id.clickLeft:
-                --currentPhotoIndex;
-                break;
-            case R.id.clickRight:
-                ++currentPhotoIndex;
-                break;
-            default:
-                break;
+        if (photoGallery.size() != 0){
+            switch (v.getId()) {
+                case R.id.clickLeft:
+                    --currentPhotoIndex;
+                    break;
+                case R.id.clickRight:
+                    ++currentPhotoIndex;
+                    break;
+                default:
+                    break;
+            }
+
+            if (currentPhotoIndex < 0)
+                currentPhotoIndex = photoGallery.size() -1;
+            if (currentPhotoIndex >= photoGallery.size())
+                currentPhotoIndex = 0;
         }
-        if (currentPhotoIndex < 0)
-            currentPhotoIndex = photoGallery.size() -1;
-        if (currentPhotoIndex >= photoGallery.size())
-            currentPhotoIndex = 0;
 
         currentPhotoPath = photoGallery.get(currentPhotoIndex);
         Log.d("photoleft, size", Integer.toString(photoGallery.size()));
@@ -134,6 +137,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int halfDeviceWidth = Resources.getSystem().getDisplayMetrics().widthPixels / 2;
             int bitmapWidth = bit.getWidth();
             int bitmapScale = (int)Math.ceil(bitmapWidth/halfDeviceWidth);
+            if(bitmapScale < 1)
+                bitmapScale = 1;
             int bitmapHeight = (int)Math.ceil(bit.getHeight()/bitmapScale);
 
             Bitmap scaledBit = bit.createScaledBitmap(bit, halfDeviceWidth, bitmapHeight, false);
