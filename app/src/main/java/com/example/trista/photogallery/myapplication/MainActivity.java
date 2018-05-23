@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick( View v) {
-        if (photoGallery.size() != 0){
+        if (photoGallery.size() > 0){
             switch (v.getId()) {
                 case R.id.clickLeft:
                     --currentPhotoIndex;
