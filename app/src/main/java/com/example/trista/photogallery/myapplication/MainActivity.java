@@ -69,12 +69,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 currentPhotoIndex = photoGallery.size() -1;
             if (currentPhotoIndex >= photoGallery.size())
                 currentPhotoIndex = 0;
-        }
 
-        currentPhotoPath = photoGallery.get(currentPhotoIndex);
-        Log.d("photoleft, size", Integer.toString(photoGallery.size()));
-        Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
-        displayPhoto(currentPhotoPath);
+            currentPhotoPath = photoGallery.get(currentPhotoIndex);
+            Log.d("photoleft, size", Integer.toString(photoGallery.size()));
+            Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
+            displayPhoto(currentPhotoPath);
+        }
     }
 
     private ArrayList<String> populateGallery(Date minDate, Date maxDate) {
