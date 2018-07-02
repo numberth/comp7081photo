@@ -27,6 +27,9 @@ android {
         // '$rootDir' sets the path relative to the root directory of the current project.
         resultsDir "$rootDir/test-results"
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
