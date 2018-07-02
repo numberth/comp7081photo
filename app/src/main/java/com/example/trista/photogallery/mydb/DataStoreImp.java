@@ -2,12 +2,8 @@ package com.example.trista.photogallery.mydb;
 
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.trista.photogallery.myapplication.MainActivity;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,8 +30,17 @@ public class DataStoreImp implements InterDataStore{
         return image;
     }
 
-    public boolean deleteFile(File dir){
-        return dir.delete();
+    public boolean deleteFile(ArrayList<String> deleteArray){
+        try{
+            for(int i = 0; i < deleteArray.size(); i++){
+                File file = new File(deleteArray.get(i));
+                file.delete();
+            }
+        }catch(Exception e){
+            Log.d("ERROR MSG: ", "error deleting file.");
+            return false;
+        }
+        return true;
     }
 
     public boolean renameFile(File dir, File dirNew){

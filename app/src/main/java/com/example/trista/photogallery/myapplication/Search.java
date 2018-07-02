@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.trista.photogallery.R;
+
+import static com.example.trista.photogallery.myapplication.MainActivity.adapter;
 import static com.example.trista.photogallery.myapplication.MainActivity.ds;
 
 import java.io.File;
@@ -72,6 +74,8 @@ public class Search extends AppCompatActivity {
         File oldFile = new File(oldFileName);
 
         ds.renameFile(oldFile, newFile);
+
+        adapter.notifyDataSetChanged();
 
         startActivity(intent);
     }

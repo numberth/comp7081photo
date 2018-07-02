@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.when;
  */
 public class ExampleUnitTest {
     private DataStoreImp ds;
+    private ArrayList<String> selectedDelete;
 
     @Test
     public void addition_isCorrect() throws Exception {
@@ -30,6 +32,13 @@ public class ExampleUnitTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
         ds = new DataStoreImp();
+
+        selectedDelete = new ArrayList<>();
+        selectedDelete.add("R.drawable.a");
+        selectedDelete.add("R.drawable.b");
+        selectedDelete.add("R.drawable.c");
+        selectedDelete.add("R.drawable.d");
+        selectedDelete.add("R.drawable.e");
     }
 
     @Mock
@@ -52,8 +61,8 @@ public class ExampleUnitTest {
 
     @Test
     public void testDelete(){
-        when(ds.deleteFile(mockedFile)).thenReturn(true);
-        boolean deleted = ds.deleteFile(mockedFile);
+//        when(ds.deleteFile(selectedDelete)).thenReturn(true);
+        boolean deleted = ds.deleteFile(selectedDelete);
         assertTrue(deleted);
     }
 

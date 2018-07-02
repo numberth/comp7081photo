@@ -1,17 +1,19 @@
 package com.example.trista.photogallery.myapplication;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.trista.photogallery.R;
@@ -21,24 +23,57 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import static android.content.pm.PackageManager.FEATURE_CAMERA_ANY;
+
+public class MainActivity extends AppCompatActivity{
 
     public static DataStoreImp ds = new DataStoreImp();
+    public static ArrayList<String> selectedDelete = new ArrayList<>();
+    public static ArrayList<Integer> selectedDeleteIndex = new ArrayList<>();
+    public static MyAdapter adapter;
     public static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
+    private ArrayList<String> createLists;
     private ArrayList<String> photoGallery;
-    private String currentPhotoPath = null;
+    public static String currentPhotoPath = null;
     private int currentPhotoIndex = 0;
+    private PackageManager pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageButton btnLeft = (ImageButton)findViewById(R.id.clickLeft);
-        ImageButton btnRight = (ImageButton)findViewById(R.id.clickRight);
-        btnLeft.setOnClickListener(this);
-        btnRight.setOnClickListener(this);
+
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.imagegallery);
+        recyclerView.setHasFixedSize(true);
+
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);
+        recyclerView.setLayoutManager(layoutManager);
+
+        Date minDate = new Date(Long.MIN_VALUE);
+        Date maxDate = new Date(Long.MAX_VALUE);
+        createLists = populateGallery(minDate, maxDate);
+        selectedDeleteIndex.clear();
+        selectedDelete.clear();
+        adapter = new MyAdapter(getApplicationContext(), createLists);
+        recyclerView.setAdapter(adapter);
 
         repopulateGallery();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                }
+                return;
+            }
+        }
     }
 
     public void repopulateGallery(){
@@ -49,36 +84,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         currentPhotoIndex = photoGallery.size() -1;
         if (photoGallery.size() > 0)
             currentPhotoPath = photoGallery.get(currentPhotoIndex);
-        displayPhoto(currentPhotoPath);
-    }
-
-    public void onClick( View v) {
-        if (photoGallery.size() > 0){
-            switch (v.getId()) {
-                case R.id.clickLeft:
-                    --currentPhotoIndex;
-                    break;
-                case R.id.clickRight:
-                    ++currentPhotoIndex;
-                    break;
-                default:
-                    break;
-            }
-
-            if (currentPhotoIndex < 0)
-                currentPhotoIndex = photoGallery.size() -1;
-            if (currentPhotoIndex >= photoGallery.size())
-                currentPhotoIndex = 0;
-
-            currentPhotoPath = photoGallery.get(currentPhotoIndex);
-            Log.d("photoleft, size", Integer.toString(photoGallery.size()));
-            Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
-            displayPhoto(currentPhotoPath);
-        }
     }
 
     private ArrayList<String> populateGallery(Date minDate, Date maxDate) {
-        photoGallery = new ArrayList<String>();
+        photoGallery = new ArrayList<>();
         File file = ds.populateFiles();
         File[] fList = file.listFiles();
         try{
@@ -117,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             }
+            adapter.notifyDataSetChanged();
             return photoGallery;
         }catch(Exception e){
             Log.d("ERROR MSG: ", "no search dates");
@@ -131,24 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return photoGallery;
     }
 
-    private void displayPhoto(String path) {
-        if(photoGallery.size() > 0){
-            Bitmap bit = BitmapFactory.decodeFile(path);
-            int halfDeviceWidth = Resources.getSystem().getDisplayMetrics().widthPixels / 2;
-            int bitmapWidth = bit.getWidth();
-            int bitmapScale = (int)Math.ceil(bitmapWidth/halfDeviceWidth);
-            if(bitmapScale < 1)
-                bitmapScale = 1;
-            int bitmapHeight = (int)Math.ceil(bit.getHeight()/bitmapScale);
-
-            Bitmap scaledBit = bit.createScaledBitmap(bit, halfDeviceWidth, bitmapHeight, false);
-            ImageView iv = (ImageView) findViewById(R.id.mImageView);
-            iv.setImageBitmap(scaledBit);
-        }else{
-            Toast.makeText(MainActivity.this,"There are no photos to show.",Toast.LENGTH_LONG).show();
-        }
-    }
-
     public void openFolder(View view){
         Uri selectedUri = Uri.parse(getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString());
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -160,33 +152,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else
         {
-            Toast.makeText(MainActivity.this,"no file explore app found",Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this,"No file explore app found",Toast.LENGTH_LONG).show();
         }
     }
 
     public void openSearch(View view){
+        selectedDeleteIndex.clear();
+        selectedDelete.clear();
         Intent openSearch = new Intent(this, Search.class);
         openSearch.putExtra("photoPath", currentPhotoPath);
         startActivity(openSearch);
     }
 
     public void openCamera(View view){
-        Intent openCamera = new Intent(this, Capture.class);
-        startActivity(openCamera);
+        pm = this.getPackageManager();
+
+        if(pm.hasSystemFeature(FEATURE_CAMERA_ANY)){
+            if(ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED){
+                Intent openCamera = new Intent(this, Capture.class);
+                startActivity(openCamera);
+            }else{
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+                Toast.makeText(MainActivity.this,"No camera permission.",Toast.LENGTH_LONG).show();
+            }
+        }else{
+            Toast.makeText(MainActivity.this,"No camera available.",Toast.LENGTH_LONG).show();
+        }
     }
 
     public void deletePhotoFile(View view){
-        File file = new File(currentPhotoPath);
         try{
-            ds.deleteFile(file);
+            ds.deleteFile(selectedDelete);
+            for(int i = 0; i < selectedDeleteIndex.size(); i++){
+                createLists.remove((int)selectedDeleteIndex.get(i));
+                adapter.notifyItemRemoved(selectedDeleteIndex.get(i));
+            }
+            selectedDeleteIndex.clear();
+            selectedDelete.clear();
+            adapter.notifyDataSetChanged();
         }catch(Exception e){
             Toast.makeText(MainActivity.this,"Error deleting picture.",Toast.LENGTH_LONG).show();
+            adapter.notifyDataSetChanged();
         }
-        repopulateGallery();
     }
-
-    public ArrayList<String> getPhotoGallery(){
-        return photoGallery;
-    }
-
 }
